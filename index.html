@@ -203,7 +203,7 @@
                         <div class="col-span-5 font-bold text-slate-600 flex items-center">Valor Solicitado</div>
                         <div class="col-span-7 flex items-center">
                             <span class="font-bold text-slate-400 mr-1">$</span>
-                            <input type="text" id="valorSolicitado" oninput="formatearInputMoneda(this); calcularTodo();" class="input-cliq font-extrabold text-cliq-blue text-right" value="1.000.000">
+                            <input type="text" id="valorSolicitado" oninput="formatearInputMoneda(this); calcularTodo();" class="input-cliq font-extrabold text-cliq-blue text-right" value="17.050.000">
                         </div>
 
                         <div class="col-span-5 font-bold text-slate-600 flex items-center">Plazo (Meses)</div>
@@ -230,7 +230,7 @@
                         </div>
 
                         <div class="col-span-5 bg-emerald-700 text-white font-bold p-2 rounded-l-lg text-xs flex items-center">
-                            DESCUENTO MENSUAL TOTAL
+                            DESCUENTO MENSUAL CONSTANTE
                         </div>
                         <div class="col-span-7 bg-emerald-700 text-white font-black text-right p-2 rounded-r-lg text-sm" id="lblDescuentoMensual">
                             $ 0
@@ -240,8 +240,8 @@
 
                 <div class="cliq-card p-2.5 space-y-1.5 text-xs">
                     <div class="font-bold text-slate-700 border-b pb-1 text-[11px] uppercase tracking-wider flex justify-between">
-                        <span>Composición de Cuota Mensual</span>
-                        <span class="text-cliq-purple font-extrabold">Cuota Fija</span>
+                        <span>Composición de Cuota Mensual (Mes 1)</span>
+                        <span class="text-cliq-purple font-extrabold">Cuota Fija Total</span>
                     </div>
                     <div class="divide-y divide-slate-100 text-[11px]">
                         <div class="flex justify-between py-1">
@@ -253,11 +253,11 @@
                             <span id="compCapital" class="font-semibold text-slate-700">$ 0</span>
                         </div>
                         <div class="flex justify-between py-1">
-                            <span class="text-slate-500">Seguro de Vida Deudores</span>
+                            <span class="text-slate-500">Seguro de Vida (Decreciente - Mes 1)</span>
                             <span id="compSeguro" class="font-semibold text-slate-700">$ 0</span>
                         </div>
                         <div class="flex justify-between py-1 font-bold text-cliq-blue bg-blue-50/50 px-1 rounded">
-                            <span>Cuota Financiera (Capital + Interés)</span>
+                            <span>Cuota Financiera Mes 1 (Capital + Interés)</span>
                             <span id="compCuotaFinanciera">$ 0</span>
                         </div>
                     </div>
@@ -340,9 +340,9 @@
                 <div>
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-cliq-purple inline-block"></span>
-                        <span>Tabla de Amortización (Sistema Bancario - Cuota Fija)</span>
+                        <span>Tabla de Amortización (Descuento Fijo Total + Seguro Decreciente)</span>
                     </h2>
-                    <p class="text-[10px] text-slate-400">Proyección cuota a cuota con cobro fijo mensual para descuento por nómina de libranza.</p>
+                    <p class="text-[10px] text-slate-400">El descuento total es exactamente el mismo en todas las cuotas, amortizando la deuda hasta el plazo final.</p>
                 </div>
                 <div class="space-x-1.5 mt-2 sm:mt-0 no-print flex">
                     <button onclick="window.print()" class="cliq-gradient-btn text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition shadow-sm flex items-center gap-1">
@@ -373,7 +373,7 @@
                         </tr>
                     </thead>
                     <tbody id="tbodyAmortizacion" class="divide-y divide-slate-100">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
         </section>
@@ -387,7 +387,6 @@
             GMF_RATE: 0.004                  // 4x1000 (0.4%)
         };
 
-        // Formateador sin decimales (Redondeado a enteros)
         const formatterCOP = new Intl.NumberFormat('es-CO', {
             style: 'currency',
             currency: 'COP',
@@ -443,6 +442,19 @@
             calcularTodo();
         }
 
+        // Calcula la cuota total fija mediante la tasa efectiva combinada (Interés + Seguro)
+        function calcularCuotaTotalFija(valorCredito, plazo, tasaMV, tasaSeguro, extraprima) {
+            const tasaCombinada = tasaMV + tasaSeguro;
+            let cuotaTotal = 0;
+            if (tasaCombinada > 0) {
+                const factor = Math.pow(1 + tasaCombinada, plazo);
+                cuotaTotal = Math.round(valorCredito * (tasaCombinada * factor) / (factor - 1)) + extraprima;
+            } else {
+                cuotaTotal = Math.round(valorCredito / plazo) + extraprima;
+            }
+            return cuotaTotal;
+        }
+
         function calcularTodo() {
             formatearNombrePropio(document.getElementById('nombres'));
             formatearNombrePropio(document.getElementById('apellidos'));
@@ -453,7 +465,7 @@
             
             const plazo = Math.max(1, parseInt(document.getElementById('plazo').value) || 1);
             const tasaMV = parseNum('tasaInteresMV') / 100;
-            const extraprima = parseNum('extraprima');
+            const extraprima = Math.round(parseNum('extraprima'));
             const tasaSeguro = parseNum('tasaSeguro') / 100;
 
             document.getElementById('lblPlazoBadge').innerText = plazo;
@@ -467,7 +479,6 @@
                 lblEstado.className = 'text-sm font-extrabold tracking-tight text-emerald-300';
             }
 
-            // Cálculos redondeados a enteros
             const valICredit = Math.round(valorSolicitado * CONFIG_CLICK.I_CREDIT_RATE);
             const valContratoComercial = Math.round(valorSolicitado * CONFIG_CLICK.CONTRATO_COMERCIAL_RATE);
             const totalPagosTerceros = valICredit + valContratoComercial;
@@ -477,19 +488,13 @@
             const desembolsoCliente = Math.round(valorSolicitado / (1 + CONFIG_CLICK.GMF_RATE));
             const gmf = valorSolicitado - desembolsoCliente;
 
-            let cuotaFinanciera = 0;
-            if (tasaMV > 0) {
-                const factor = Math.pow(1 + tasaMV, plazo);
-                cuotaFinanciera = Math.round(valorCreditoFinanciado * (tasaMV * factor) / (factor - 1));
-            } else {
-                cuotaFinanciera = Math.round(valorCreditoFinanciado / plazo);
-            }
+            // Descuento total mensual estrictamente constante para todo el plazo
+            const descuentoTotalFijo = calcularCuotaTotalFija(valorCreditoFinanciado, plazo, tasaMV, tasaSeguro, extraprima);
 
-            const seguroFijo = Math.round(valorCreditoFinanciado * tasaSeguro);
-            const descuentoMensualTotal = cuotaFinanciera + seguroFijo + Math.round(extraprima);
-
+            const seguroMes1 = Math.round(valorCreditoFinanciado * tasaSeguro);
             const interesMes1 = Math.round(valorCreditoFinanciado * tasaMV);
-            const capitalMes1 = cuotaFinanciera - interesMes1;
+            const cuotaFinancieraMes1 = descuentoTotalFijo - seguroMes1 - extraprima;
+            const capitalMes1 = cuotaFinancieraMes1 - interesMes1;
 
             document.getElementById('valICredit').innerText = formatterCOP.format(valICredit);
             document.getElementById('valContratoComercial').innerText = formatterCOP.format(valContratoComercial);
@@ -499,11 +504,11 @@
             document.getElementById('lblGMF').innerText = formatterCOP.format(gmf);
             document.getElementById('lblDesembolsoCliente').innerText = formatterCOP.format(desembolsoCliente);
 
-            document.getElementById('lblDescuentoMensual').innerText = formatterCOP.format(descuentoMensualTotal);
+            document.getElementById('lblDescuentoMensual').innerText = formatterCOP.format(descuentoTotalFijo);
             document.getElementById('compInteres').innerText = formatterCOP.format(interesMes1);
             document.getElementById('compCapital').innerText = formatterCOP.format(capitalMes1);
-            document.getElementById('compSeguro').innerText = formatterCOP.format(seguroFijo);
-            document.getElementById('compCuotaFinanciera').innerText = formatterCOP.format(cuotaFinanciera);
+            document.getElementById('compSeguro').innerText = formatterCOP.format(seguroMes1);
+            document.getElementById('compCuotaFinanciera').innerText = formatterCOP.format(cuotaFinancieraMes1);
 
             if (!document.getElementById('seccionAmortizacion').classList.contains('hidden')) {
                 generarTablaAmortizacion();
@@ -522,40 +527,38 @@
             const tasaSeguro = parseNum('tasaSeguro') / 100;
             const extraprima = Math.round(parseNum('extraprima'));
 
-            let cuotaFinanciera = 0;
-            if (tasaMV > 0) {
-                const factor = Math.pow(1 + tasaMV, plazo);
-                cuotaFinanciera = Math.round(valorCredito * (tasaMV * factor) / (factor - 1));
-            } else {
-                cuotaFinanciera = Math.round(valorCredito / plazo);
-            }
-
-            const seguroFijo = Math.round(valorCredito * tasaSeguro);
-            const descuentoTotalFijo = cuotaFinanciera + seguroFijo + extraprima;
+            // Descuento mensual total fijo
+            const cuotaTotalFija = calcularCuotaTotalFija(valorCredito, plazo, tasaMV, tasaSeguro, extraprima);
 
             let saldo = valorCredito;
 
             for (let mes = 1; mes <= plazo; mes++) {
-                let interes = Math.round(saldo * tasaMV);
-                let capital = cuotaFinanciera - interes;
+                let seguroMes = Math.round(saldo * tasaSeguro);
+                let interesMes = Math.round(saldo * tasaMV);
 
+                // La cuota financiera absorbe la disminución del seguro
+                let cuotaFinancieraMes = cuotaTotalFija - seguroMes - extraprima;
+                let capitalMes = cuotaFinancieraMes - interesMes;
+
+                // Ajuste de precisión exacta para la última cuota (Mes N)
                 if (mes === plazo) {
-                    capital = saldo;
-                    cuotaFinanciera = capital + interes;
+                    capitalMes = saldo;
+                    cuotaFinancieraMes = capitalMes + interesMes;
+                    seguroMes = cuotaTotalFija - cuotaFinancieraMes - extraprima;
                 }
 
-                const saldoFinal = Math.max(0, saldo - capital);
+                const saldoFinal = Math.max(0, saldo - capitalMes);
 
                 const tr = document.createElement('tr');
                 tr.className = mes % 2 === 0 ? 'bg-purple-50/20' : 'bg-white';
                 tr.innerHTML = `
                     <td class="text-center font-bold text-cliq-purple">${mes}</td>
                     <td>${formatterCOP.format(saldo)}</td>
-                    <td class="font-semibold text-cliq-blue">${formatterCOP.format(cuotaFinanciera)}</td>
-                    <td class="font-semibold text-slate-800">${formatterCOP.format(capital)}</td>
-                    <td class="text-slate-600">${formatterCOP.format(interes)}</td>
-                    <td class="text-slate-600">${formatterCOP.format(seguroFijo)}</td>
-                    <td class="font-bold text-emerald-700">${formatterCOP.format(cuotaFinanciera + seguroFijo + extraprima)}</td>
+                    <td class="font-semibold text-cliq-blue">${formatterCOP.format(cuotaFinancieraMes)}</td>
+                    <td class="font-semibold text-slate-800">${formatterCOP.format(capitalMes)}</td>
+                    <td class="text-slate-600">${formatterCOP.format(interesMes)}</td>
+                    <td class="text-slate-600">${formatterCOP.format(seguroMes)}</td>
+                    <td class="font-bold text-emerald-700">${formatterCOP.format(cuotaTotalFija)}</td>
                     <td class="font-bold text-slate-900">${formatterCOP.format(saldoFinal)}</td>
                 `;
                 tbody.appendChild(tr);
