@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliq | Liquidador de Crédito Libranza Pensionados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cliq: {
+                            blue: '#0052FF',
+                            purple: '#A800FF',
+                            dark: '#0F172A',
+                            lightBg: '#F8FAFC',
+                            cardBorder: '#E2E8F0',
+                            accentBg: '#F3E8FF'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        .input-nombre-propio {
+            text-transform: capitalize;
+        }
+
+        .input-cliq {
+            width: 100%;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #E2E8F0;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #0F172A;
+            background-color: #FFFFFF;
+            transition: all 0.15s ease-in-out;
+        }
+        .input-cliq:focus {
+            outline: none;
+            border-color: #A800FF;
+            box-shadow: 0 0 0 2px rgba(168, 0, 255, 0.15);
+        }
+        .input-readonly {
+            background-color: #F8FAFC;
+            color: #475569;
+        }
+        .cliq-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+        }
+        .cliq-gradient-btn {
+            background: linear-gradient(135deg, #0052FF 0%, #A800FF 100%);
+        }
+        .cliq-gradient-btn:hover {
+            opacity: 0.95;
+            box-shadow: 0 4px 15px rgba(168, 0, 255, 0.3);
+        }
+        .table-row-compact td, .table-row-compact th {
+            padding: 0.35rem 0.5rem;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .cliq-card { box-shadow: none; border: 1px solid #CBD5E1; }
+            .max-h-\[400px\] { max-height: none !important; overflow: visible !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-2 md:p-4 min-h-screen">
+
+    <div class="max-w-6xl mx-auto space-y-3">
+
+        <header class="cliq-card p-3 flex flex-wrap justify-between items-center shadow-sm">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cliq-blue to-cliq-purple p-0.5 shadow-md flex items-center justify-center">
+                    <div class="w-full h-full bg-white rounded-[10px] flex items-center justify-center">
+                        <svg class="w-5 h-5 text-cliq-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect x="2" y="5" width="20" height="14" rx="3" stroke-width="2.2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10" stroke-width="2.2"></line>
+                            <line x1="6" y1="15" x2="10" y2="15" stroke-width="2.5" stroke-linecap="round"></line>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight flex items-center gap-1.5">
+                        <span class="text-cliq-blue font-black tracking-tighter">Cliq</span>
+                        <span class="text-slate-300 font-light">|</span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Liquidador de Crédito Libranza</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-medium">Radicación Inteligente de Créditos • Pensionados Colombia</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 mt-2 sm:mt-0">
+                <span class="bg-purple-50 text-cliq-purple border border-purple-200 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                    Libranza Activa
+                </span>
+                <button onclick="window.print()" class="no-print cliq-gradient-btn text-white font-bold text-xs px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Imprimir / PDF
+                </button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+
+            <div class="lg:col-span-7 space-y-3">
+
+                <div class="cliq-card overflow-hidden">
+                    <div class="bg-slate-900 text-white font-bold text-xs px-3 py-1.5 flex justify-between items-center">
+                        <span class="tracking-wide">1. INFORMACIÓN GENERAL DE ESTUDIO</span>
+                        <span class="text-[10px] text-purple-300 font-normal">Convenio Pagaduría</span>
+                    </div>
+                    
+                    <div class="p-2.5 grid grid-cols-12 gap-2 text-xs">
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Fecha del Estudio</div>
+                        <div class="col-span-8">
+                            <input type="date" id="fechaEstudio" class="input-cliq text-left" value="2026-08-17">
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Nombres</div>
+                        <div class="col-span-8">
+                            <input type="text" id="nombres" onblur="formatearNombrePropio(this)" class="input-cliq input-nombre-propio text-left" value="">
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Apellidos</div>
+                        <div class="col-span-8">
+                            <input type="text" id="apellidos" onblur="formatearNombrePropio(this)" class="input-cliq input-nombre-propio text-left" value="">
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Identificación</div>
+                        <div class="col-span-8">
+                            <input type="text" id="identificacion" class="input-cliq text-left" value="">
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Fecha Nacimiento</div>
+                        <div class="col-span-8">
+                            <input type="date" id="fechaNacimiento" onchange="calcularEdad()" class="input-cliq text-left" value="">
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Edad</div>
+                        <div class="col-span-8">
+                            <input type="number" id="edad" class="input-cliq input-readonly text-center font-bold" readonly value="76">
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Tipo de Crédito</div>
+                        <div class="col-span-8">
+                            <select id="tipoCredito" class="input-cliq text-left">
+                                <option value="Compra De Cartera" selected>Compra De Cartera</option>
+                                <option value="Libre Inversión">Libre Inversión</option>
+                                <option value="Recoge Saldo">Recoge Saldo</option>   
+                                <option value="Saneamiento">Saneamiento</option>
+                            </select>
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Pagaduría</div>
+                        <div class="col-span-8">
+                            <select id="pagaduria" class="input-cliq text-left font-semibold">
+                                <option value="Colpensiones" selected>Colpensiones</option>
+                                <option value="Fopep">Fopep</option>
+                                <option value="Casur">Casur</option>
+                                <option value="Cremil">Cremil</option>
+                                <option value="Fiduprevisora">Fiduprevisora</option>
+                            </select>
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Tipo de Contrato</div>
+                        <div class="col-span-8">
+                            <input type="text" id="tipoContrato" class="input-cliq input-readonly text-left font-bold text-cliq-blue" readonly value="Pensionado">
+                        </div>
+
+                        <div class="col-span-4 font-bold text-slate-500 flex items-center">Comercial / Asesor</div>
+                        <div class="col-span-8">
+                            <input type="text" id="comercial" onblur="formatearNombrePropio(this)" class="input-cliq input-nombre-propio text-left" value="Comercial Click">
+                        </div>
+
+                        <div class="col-span-5 bg-slate-900 text-white font-bold p-1.5 rounded-l-lg text-[11px] flex items-center">
+                            Máximo Crédito x Edad
+                        </div>
+                        <div class="col-span-7 bg-slate-900 text-cliq-purple font-black text-right p-1.5 rounded-r-lg text-xs flex items-center justify-end">
+                            <span class="text-purple-300 mr-1">$</span>
+                            <input type="text" id="maxValorCredito" oninput="formatearInputMoneda(this); calcularTodo();" class="bg-transparent text-right w-full text-purple-200 font-bold focus:outline-none" value="20.000.000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cliq-card overflow-hidden">
+                    <div class="bg-cliq-blue text-white font-bold text-xs px-3 py-1.5 flex justify-between items-center">
+                        <span class="tracking-wide">2. CONDICIONES SOLICITADAS</span>
+                        <span class="text-[10px] text-blue-100 font-normal">Tasa y Plazo</span>
+                    </div>
+
+                    <div class="p-2.5 grid grid-cols-12 gap-2 text-xs">
+                        <div class="col-span-5 font-bold text-slate-600 flex items-center">Valor Solicitado</div>
+                        <div class="col-span-7 flex items-center">
+                            <span class="font-bold text-slate-400 mr-1">$</span>
+                            <input type="text" id="valorSolicitado" oninput="formatearInputMoneda(this); calcularTodo();" class="input-cliq font-extrabold text-cliq-blue text-right" value="17.050.000">
+                        </div>
+
+                        <div class="col-span-5 font-bold text-slate-600 flex items-center">Plazo (Meses)</div>
+                        <div class="col-span-7">
+                            <input type="number" id="plazo" oninput="calcularTodo()" class="input-cliq text-right font-bold" value="96" min="1" max="144">
+                        </div>
+
+                        <div class="col-span-5 font-bold text-slate-600 flex items-center">Tasa Interés MV (%)</div>
+                        <div class="col-span-7 flex items-center">
+                            <input type="number" id="tasaInteresMV" oninput="calcularTodo()" class="input-cliq text-right font-bold" value="1.80" step="0.01">
+                            <span class="font-bold text-slate-400 ml-1">%</span>
+                        </div>
+
+                        <div class="col-span-5 font-bold text-slate-600 flex items-center">Extraprima ($)</div>
+                        <div class="col-span-7 flex items-center">
+                            <span class="font-bold text-slate-400 mr-1">$</span>
+                            <input type="number" id="extraprima" oninput="calcularTodo()" class="input-cliq text-right" value="0">
+                        </div>
+
+                        <div class="col-span-5 font-bold text-slate-600 flex items-center">Seguro Vida (%)</div>
+                        <div class="col-span-7 flex items-center">
+                            <input type="number" id="tasaSeguro" oninput="calcularTodo()" class="input-cliq text-right font-bold" value="0.235" step="0.001">
+                            <span class="font-bold text-slate-400 ml-1">%</span>
+                        </div>
+
+                        <div class="col-span-5 bg-emerald-700 text-white font-bold p-2 rounded-l-lg text-xs flex items-center">
+                            DESCUENTO MENSUAL TOTAL
+                        </div>
+                        <div class="col-span-7 bg-emerald-700 text-white font-black text-right p-2 rounded-r-lg text-sm" id="lblDescuentoMensual">
+                            $ 0
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cliq-card p-2.5 space-y-1.5 text-xs">
+                    <div class="font-bold text-slate-700 border-b pb-1 text-[11px] uppercase tracking-wider flex justify-between">
+                        <span>Composición de Cuota Mensual</span>
+                        <span class="text-cliq-purple font-extrabold">Cuota Fija</span>
+                    </div>
+                    <div class="divide-y divide-slate-100 text-[11px]">
+                        <div class="flex justify-between py-1">
+                            <span class="text-slate-500">Interés Mensual (Tasa MV)</span>
+                            <span id="compInteres" class="font-semibold text-slate-700">$ 0</span>
+                        </div>
+                        <div class="flex justify-between py-1">
+                            <span class="text-slate-500">Abono a Capital</span>
+                            <span id="compCapital" class="font-semibold text-slate-700">$ 0</span>
+                        </div>
+                        <div class="flex justify-between py-1">
+                            <span class="text-slate-500">Seguro de Vida Deudores</span>
+                            <span id="compSeguro" class="font-semibold text-slate-700">$ 0</span>
+                        </div>
+                        <div class="flex justify-between py-1 font-bold text-cliq-blue bg-blue-50/50 px-1 rounded">
+                            <span>Cuota Financiera (Capital + Interés)</span>
+                            <span id="compCuotaFinanciera">$ 0</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="lg:col-span-5 space-y-3">
+
+                <div class="bg-gradient-to-r from-slate-900 via-cliq-dark to-cliq-purple p-3 rounded-2xl text-white flex justify-between items-center shadow-sm border border-slate-800">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-wider text-purple-300 font-bold">Estado del Crédito</div>
+                        <div class="text-sm font-extrabold tracking-tight" id="lblEstadoLibranza">LIBRANZA APROBADA</div>
+                    </div>
+                    <div class="text-right bg-white/10 px-3 py-1 rounded-xl backdrop-blur-sm">
+                        <span class="text-xl font-black text-white" id="lblPlazoBadge">96</span>
+                        <span class="text-[9px] block text-purple-200 uppercase font-bold">Meses</span>
+                    </div>
+                </div>
+
+                <div class="cliq-card p-3 bg-gradient-to-br from-white to-purple-50/30 border-purple-100">
+                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Valor Crédito Financiado</div>
+                    <div id="lblValorCredito" class="text-2xl font-black text-cliq-blue tracking-tight mt-0.5">$ 0</div>
+                    <div class="text-[10px] text-slate-500 mt-1">Incluye valor solicitado + gastos de compra de cartera financiados.</div>
+                </div>
+
+                <div class="cliq-card overflow-hidden text-xs">
+                    <div class="bg-slate-800 text-white font-bold px-3 py-1.5 text-xs flex justify-between">
+                        <span>PAGOS A TERCEROS (DEDUCCIONES)</span>
+                        <span class="text-[10px] text-slate-300 font-normal">Retenciones</span>
+                    </div>
+                    <table class="w-full table-row-compact text-left">
+                        <thead class="bg-slate-100 text-slate-600 font-bold border-b text-[10px]">
+                            <tr>
+                                <th>TIPO</th>
+                                <th>CONCEPTO</th>
+                                <th class="text-right">VALOR</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-[11px]">
+                            <tr>
+                                <td class="text-slate-500">(-) Deducción</td>
+                                <td class="font-bold text-slate-700">I Credit (8%)</td>
+                                <td class="text-right font-bold text-slate-800" id="valICredit">$ 0</td>
+                            </tr>
+                            <tr>
+                                <td class="text-slate-500">(-) Deducción</td>
+                                <td class="font-bold text-slate-700">Contrato Comercial (6%)</td>
+                                <td class="text-right font-bold text-slate-800" id="valContratoComercial">$ 0</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="border-t-2 border-slate-200">
+                            <tr class="bg-slate-50 font-bold">
+                                <td colspan="2" class="text-slate-700">Total Deducciones Terceros</td>
+                                <td class="text-right text-cliq-purple font-black" id="lblTotalPagosTerceros">$ 0</td>
+                            </tr>
+                            <tr class="bg-amber-50/60 font-bold text-amber-900">
+                                <td colspan="2" class="text-[10px]">GMF / Gravamen (4X1000)</td>
+                                <td class="text-right font-black" id="lblGMF">$ 0</td>
+                            </tr>
+                            <tr class="bg-slate-900 text-white font-black">
+                                <td colspan="2" class="p-2 text-xs uppercase">Desembolso Neto Cliente</td>
+                                <td class="p-2 text-right text-emerald-400 text-sm font-black" id="lblDesembolsoCliente">$ 0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <button onclick="generarTablaAmortizacion()" class="no-print w-full cliq-gradient-btn text-white font-bold py-2.5 px-4 rounded-xl shadow-md flex items-center justify-center space-x-2 transition transform active:scale-98">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <span>Generar Tabla de Amortización</span>
+                </button>
+
+            </div>
+
+        </div>
+
+        <section id="seccionAmortizacion" class="cliq-card p-3 mt-4 hidden">
+            <div class="flex flex-wrap justify-between items-center mb-3 border-b pb-2">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-cliq-purple inline-block"></span>
+                        <span>Tabla de Amortización (Sistema Bancario - Cuota Fija)</span>
+                    </h2>
+                    <p class="text-[10px] text-slate-400">Proyección cuota a cuota con cobro fijo mensual para descuento por nómina de libranza.</p>
+                </div>
+                <div class="space-x-1.5 mt-2 sm:mt-0 no-print flex">
+                    <button onclick="window.print()" class="cliq-gradient-btn text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition shadow-sm flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Imprimir PDF
+                    </button>
+                    <button onclick="exportarCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition shadow-sm flex items-center gap-1">
+                        📥 Exportar Excel
+                    </button>
+                    <button onclick="document.getElementById('seccionAmortizacion').classList.add('hidden')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-[11px] font-bold px-2.5 py-1 rounded-lg transition">
+                        ✖ Ocultar
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto border rounded-xl max-h-[400px]">
+                <table class="w-full text-[11px] text-right table-row-compact">
+                    <thead class="bg-slate-900 text-white sticky top-0 font-bold">
+                        <tr>
+                            <th class="text-center">Cuota</th>
+                            <th>Saldo Inicial</th>
+                            <th>Cuota Financiera</th>
+                            <th>Abono Capital</th>
+                            <th>Intereses</th>
+                            <th>Seguro</th>
+                            <th>Descuento Total</th>
+                            <th>Saldo Final</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyAmortizacion" class="divide-y divide-slate-100">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const CONFIG_CLICK = {
+            I_CREDIT_RATE: 0.08,              // 8% sobre valor solicitado
+            CONTRATO_COMERCIAL_RATE: 0.06,   // 6% sobre valor solicitado
+            GMF_RATE: 0.004                  // 4x1000 (0.4%)
+        };
+
+        // Formateador sin decimales (Redondeado a enteros)
+        const formatterCOP = new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+
+        function formatearInputMoneda(inputElement) {
+            let valorLimpio = inputElement.value.replace(/\D/g, '');
+            if (valorLimpio === '') {
+                inputElement.value = '';
+                return;
+            }
+            let numero = parseInt(valorLimpio, 10);
+            inputElement.value = numero.toLocaleString('es-CO');
+        }
+
+        function parseNumMoneda(id) {
+            const rawVal = document.getElementById(id).value;
+            if (!rawVal) return 0;
+            const limpio = rawVal.replace(/\./g, '').replace(/,/g, '');
+            const num = parseFloat(limpio);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function parseNum(id) {
+            const val = parseFloat(document.getElementById(id).value);
+            return isNaN(val) ? 0 : val;
+        }
+
+        function formatearNombrePropio(inputElement) {
+            if (!inputElement || !inputElement.value) return;
+            const palabras = inputElement.value.toLowerCase().split(' ');
+            const palabrasFormateadas = palabras.map(palabra => {
+                if (palabra.length === 0) return '';
+                return palabra.charAt(0).toUpperCase() + palabra.slice(1);
+            });
+            inputElement.value = palabrasFormateadas.join(' ');
+        }
+
+        function calcularEdad() {
+            const fechaNac = document.getElementById('fechaNacimiento').value;
+            if (fechaNac) {
+                const hoy = new Date();
+                const nac = new Date(fechaNac);
+                let edad = hoy.getFullYear() - nac.getFullYear();
+                const m = hoy.getMonth() - nac.getMonth();
+                if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) {
+                    edad--;
+                }
+                document.getElementById('edad').value = edad;
+            }
+            calcularTodo();
+        }
+
+        function calcularTodo() {
+            formatearNombrePropio(document.getElementById('nombres'));
+            formatearNombrePropio(document.getElementById('apellidos'));
+            formatearNombrePropio(document.getElementById('comercial'));
+
+            const valorSolicitado = parseNumMoneda('valorSolicitado');
+            const maxValorCredito = parseNumMoneda('maxValorCredito');
+            
+            const plazo = Math.max(1, parseInt(document.getElementById('plazo').value) || 1);
+            const tasaMV = parseNum('tasaInteresMV') / 100;
+            const extraprima = parseNum('extraprima');
+            const tasaSeguro = parseNum('tasaSeguro') / 100;
+
+            document.getElementById('lblPlazoBadge').innerText = plazo;
+
+            const lblEstado = document.getElementById('lblEstadoLibranza');
+            if (valorSolicitado > maxValorCredito) {
+                lblEstado.innerText = 'EXCEDE MONTO MÁXIMO';
+                lblEstado.className = 'text-sm font-extrabold tracking-tight text-rose-300';
+            } else {
+                lblEstado.innerText = 'LIBRANZA APROBADA';
+                lblEstado.className = 'text-sm font-extrabold tracking-tight text-emerald-300';
+            }
+
+            // Cálculos redondeados a enteros
+            const valICredit = Math.round(valorSolicitado * CONFIG_CLICK.I_CREDIT_RATE);
+            const valContratoComercial = Math.round(valorSolicitado * CONFIG_CLICK.CONTRATO_COMERCIAL_RATE);
+            const totalPagosTerceros = valICredit + valContratoComercial;
+
+            const valorCreditoFinanciado = valorSolicitado + totalPagosTerceros;
+
+            const desembolsoCliente = Math.round(valorSolicitado / (1 + CONFIG_CLICK.GMF_RATE));
+            const gmf = valorSolicitado - desembolsoCliente;
+
+            let cuotaFinanciera = 0;
+            if (tasaMV > 0) {
+                const factor = Math.pow(1 + tasaMV, plazo);
+                cuotaFinanciera = Math.round(valorCreditoFinanciado * (tasaMV * factor) / (factor - 1));
+            } else {
+                cuotaFinanciera = Math.round(valorCreditoFinanciado / plazo);
+            }
+
+            const seguroFijo = Math.round(valorCreditoFinanciado * tasaSeguro);
+            const descuentoMensualTotal = cuotaFinanciera + seguroFijo + Math.round(extraprima);
+
+            const interesMes1 = Math.round(valorCreditoFinanciado * tasaMV);
+            const capitalMes1 = cuotaFinanciera - interesMes1;
+
+            document.getElementById('valICredit').innerText = formatterCOP.format(valICredit);
+            document.getElementById('valContratoComercial').innerText = formatterCOP.format(valContratoComercial);
+            document.getElementById('lblTotalPagosTerceros').innerText = formatterCOP.format(totalPagosTerceros);
+            document.getElementById('lblValorCredito').innerText = formatterCOP.format(valorCreditoFinanciado);
+
+            document.getElementById('lblGMF').innerText = formatterCOP.format(gmf);
+            document.getElementById('lblDesembolsoCliente').innerText = formatterCOP.format(desembolsoCliente);
+
+            document.getElementById('lblDescuentoMensual').innerText = formatterCOP.format(descuentoMensualTotal);
+            document.getElementById('compInteres').innerText = formatterCOP.format(interesMes1);
+            document.getElementById('compCapital').innerText = formatterCOP.format(capitalMes1);
+            document.getElementById('compSeguro').innerText = formatterCOP.format(seguroFijo);
+            document.getElementById('compCuotaFinanciera').innerText = formatterCOP.format(cuotaFinanciera);
+
+            if (!document.getElementById('seccionAmortizacion').classList.contains('hidden')) {
+                generarTablaAmortizacion();
+            }
+        }
+
+        function generarTablaAmortizacion() {
+            const tbody = document.getElementById('tbodyAmortizacion');
+            tbody.innerHTML = '';
+
+            const valorSolicitado = parseNumMoneda('valorSolicitado');
+            const totalTerceros = Math.round(valorSolicitado * (CONFIG_CLICK.I_CREDIT_RATE + CONFIG_CLICK.CONTRATO_COMERCIAL_RATE));
+            const valorCredito = valorSolicitado + totalTerceros;
+            const plazo = Math.max(1, parseInt(document.getElementById('plazo').value) || 1);
+            const tasaMV = parseNum('tasaInteresMV') / 100;
+            const tasaSeguro = parseNum('tasaSeguro') / 100;
+            const extraprima = Math.round(parseNum('extraprima'));
+
+            let cuotaFinanciera = 0;
+            if (tasaMV > 0) {
+                const factor = Math.pow(1 + tasaMV, plazo);
+                cuotaFinanciera = Math.round(valorCredito * (tasaMV * factor) / (factor - 1));
+            } else {
+                cuotaFinanciera = Math.round(valorCredito / plazo);
+            }
+
+            const seguroFijo = Math.round(valorCredito * tasaSeguro);
+            const descuentoTotalFijo = cuotaFinanciera + seguroFijo + extraprima;
+
+            let saldo = valorCredito;
+
+            for (let mes = 1; mes <= plazo; mes++) {
+                let interes = Math.round(saldo * tasaMV);
+                let capital = cuotaFinanciera - interes;
+
+                if (mes === plazo) {
+                    capital = saldo;
+                    cuotaFinanciera = capital + interes;
+                }
+
+                const saldoFinal = Math.max(0, saldo - capital);
+
+                const tr = document.createElement('tr');
+                tr.className = mes % 2 === 0 ? 'bg-purple-50/20' : 'bg-white';
+                tr.innerHTML = `
+                    <td class="text-center font-bold text-cliq-purple">${mes}</td>
+                    <td>${formatterCOP.format(saldo)}</td>
+                    <td class="font-semibold text-cliq-blue">${formatterCOP.format(cuotaFinanciera)}</td>
+                    <td class="font-semibold text-slate-800">${formatterCOP.format(capital)}</td>
+                    <td class="text-slate-600">${formatterCOP.format(interes)}</td>
+                    <td class="text-slate-600">${formatterCOP.format(seguroFijo)}</td>
+                    <td class="font-bold text-emerald-700">${formatterCOP.format(cuotaFinanciera + seguroFijo + extraprima)}</td>
+                    <td class="font-bold text-slate-900">${formatterCOP.format(saldoFinal)}</td>
+                `;
+                tbody.appendChild(tr);
+
+                saldo = saldoFinal;
+            }
+
+            document.getElementById('seccionAmortizacion').classList.remove('hidden');
+            document.getElementById('seccionAmortizacion').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportarCSV() {
+            let csv = [];
+            const rows = document.querySelectorAll("#seccionAmortizacion table tr");
+            
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 0; j < cols.length; j++) 
+                    row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+                csv.push(row.join(";"));
+            }
+
+            const csvFile = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+            const downloadLink = document.createElement("a");
+            downloadLink.download = `Cliq_Amortizacion_${document.getElementById('identificacion').value}.csv`;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+
+        window.onload = function() {
+            calcularEdad();
+        };
+    </script>
+</body>
+</html>
